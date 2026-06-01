@@ -1,0 +1,11 @@
+.env.local
+.env*.local
+.mcp.json
+.bkit/
+.claude/
+node_modules/
+.next/
+out/
+*.log
+tsconfig.tsbuildinfo
+.DS_Store

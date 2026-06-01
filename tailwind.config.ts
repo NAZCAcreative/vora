@@ -1,0 +1,133 @@
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        // Legacy brand (keep for auth components)
+        brand: {
+          50:  '#fff7ed',
+          100: '#ffedd5',
+          500: '#f97316',
+          600: '#ea580c',
+          700: '#c2410c',
+        },
+        korean: {
+          red:  '#CD2E3A',
+          blue: '#0047A0',
+        },
+        // Material Design 3 tokens
+        'primary':                    '#5e39e0',
+        'on-primary':                 '#ffffff',
+        'primary-container':          '#7757fa',
+        'on-primary-container':       '#fffbff',
+        'primary-fixed':              '#e6deff',
+        'primary-fixed-dim':          '#cabeff',
+        'on-primary-fixed':           '#1c0062',
+        'on-primary-fixed-variant':   '#4816cb',
+        'inverse-primary':            '#cabeff',
+        'surface-tint':               '#603ce2',
+        'secondary':                  '#b9045e',
+        'on-secondary':               '#ffffff',
+        'secondary-container':        '#fe4a91',
+        'on-secondary-container':     '#59002a',
+        'secondary-fixed':            '#ffd9e1',
+        'secondary-fixed-dim':        '#ffb1c6',
+        'on-secondary-fixed':         '#3f001b',
+        'on-secondary-fixed-variant': '#8e0046',
+        'tertiary':                   '#4648d4',
+        'on-tertiary':                '#ffffff',
+        'tertiary-container':         '#6063ee',
+        'on-tertiary-container':      '#fffbff',
+        'tertiary-fixed':             '#e1e0ff',
+        'tertiary-fixed-dim':         '#c0c1ff',
+        'on-tertiary-fixed':          '#07006c',
+        'on-tertiary-fixed-variant':  '#2f2ebe',
+        'error':                      '#ba1a1a',
+        'on-error':                   '#ffffff',
+        'error-container':            '#ffdad6',
+        'on-error-container':         '#93000a',
+        'background':                 '#f8f9fe',
+        'on-background':              '#191c1f',
+        'surface':                    '#f8f9fe',
+        'on-surface':                 '#191c1f',
+        'surface-variant':            '#e1e2e7',
+        'on-surface-variant':         '#484555',
+        'surface-dim':                '#d8dadf',
+        'surface-bright':             '#f8f9fe',
+        'surface-container-lowest':   '#ffffff',
+        'surface-container-low':      '#f2f3f8',
+        'surface-container':          '#eceef3',
+        'surface-container-high':     '#e7e8ed',
+        'surface-container-highest':  '#e1e2e7',
+        'inverse-surface':            '#2e3134',
+        'inverse-on-surface':         '#eff0f5',
+        'outline':                    '#797587',
+        'outline-variant':            '#c9c4d8',
+      },
+      borderRadius: {
+        DEFAULT: '0.25rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+        full: '9999px',
+      },
+      spacing: {
+        'stack-sm':         '8px',
+        'stack-md':         '16px',
+        'stack-lg':         '24px',
+        'gutter-md':        '16px',
+        'section-gap':      '32px',
+        'container-margin': '20px',
+      },
+      fontFamily: {
+        sans:     ['Be Vietnam Pro', 'Inter', 'sans-serif'],
+        headline: ['Plus Jakarta Sans', 'sans-serif'],
+        // Design system font-family tokens (maps font-body-md, font-label-lg, etc.)
+        'body-lg':            ['Be Vietnam Pro', 'Inter', 'sans-serif'],
+        'body-md':            ['Be Vietnam Pro', 'Inter', 'sans-serif'],
+        'label-lg':           ['Be Vietnam Pro', 'Inter', 'sans-serif'],
+        'label-sm':           ['Be Vietnam Pro', 'Inter', 'sans-serif'],
+        'headline-lg':        ['Plus Jakarta Sans', 'sans-serif'],
+        'headline-md':        ['Plus Jakarta Sans', 'sans-serif'],
+        'headline-lg-mobile': ['Plus Jakarta Sans', 'sans-serif'],
+        'display-lg':         ['Plus Jakarta Sans', 'sans-serif'],
+        // Legacy
+        pretendard: ['Pretendard', 'Inter', 'sans-serif'],
+      },
+      fontSize: {
+        // Design system text-scale tokens
+        'display-lg':         ['32px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'headline-lg':        ['24px', { lineHeight: '32px',  fontWeight: '700' }],
+        'headline-lg-mobile': ['22px', { lineHeight: '28px',  fontWeight: '700' }],
+        'headline-md':        ['20px', { lineHeight: '28px',  fontWeight: '600' }],
+        'body-lg':            ['16px', { lineHeight: '24px',  fontWeight: '400' }],
+        'body-md':            ['14px', { lineHeight: '20px',  fontWeight: '400' }],
+        'label-lg':           ['14px', { lineHeight: '18px',  fontWeight: '600' }],
+        'label-sm':           ['12px', { lineHeight: '16px',  fontWeight: '500' }],
+      },
+      animation: {
+        floating: 'floating 6s ease-in-out infinite',
+        float:    'float 4s ease-in-out infinite',
+      },
+      keyframes: {
+        floating: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%':      { transform: 'translateY(-20px)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%':      { transform: 'translateY(-10px)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;

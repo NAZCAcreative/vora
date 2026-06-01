@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding-bottom: 80px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+header:not(.global-top-nav) {
+  display: none !important;
+}
+
+nav.fixed.bottom-0:not(.global-bottom-nav) {
+  display: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar,
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+main {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  main.px-container-margin,
+  main[class*='px-container-margin'] {
+    padding-left: clamp(32px, 4vw, 64px);
+    padding-right: clamp(32px, 4vw, 64px);
+  }
+
+  .global-top-nav {
+    padding-left: clamp(32px, 4vw, 64px);
+    padding-right: clamp(32px, 4vw, 64px);
+  }
+}
+
+@media (min-width: 1440px) {
+  main.max-w-\[1200px\],
+  main.max-w-7xl {
+    max-width: 1440px !important;
+  }
+}
+
+/* Material Symbols variable font settings */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Gradient headline text */
+.gradient-text {
+  background: linear-gradient(135deg, #5e39e0 0%, #fe4a91 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Primary gradient button / element */
+.primary-gradient-btn {
+  background: linear-gradient(135deg, #5e39e0 0%, #fe4a91 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.primary-gradient-btn:hover {
+  filter: brightness(1.08);
+}
+.primary-gradient-btn:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+@keyframes success-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(500px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Entrance fade animation */
+@layer utilities {
+  .fade-in {
+    animation: fadeIn 0.9s ease-out both;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Alias for gradient bg on non-button elements (pagination dots, etc.) */
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #5e39e0 0%, #fe4a91 100%);
+}
+
+/* Darker-end variant used on brand icons and CTA buttons */
+.bg-gradient-primary,
+.primary-gradient {
+  background: linear-gradient(135deg, #5e39e0 0%, #b9045e 100%);
+}
+
+/* Subtle card elevation */
+.soft-card-shadow {
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Hero section soft gradient (light purple → light pink) */
+.hero-gradient {
+  background: linear-gradient(135deg, #e6deff 0%, #ffd9e1 100%);
+}
+
+/* Hide scrollbar cross-browser */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e1e2e7;
+  border-radius: 9999px;
+}
+
+/* Dot-matrix decorative background pattern */
+.custom-pattern {
+  background-color: #f8f9fe;
+  background-image:
+    radial-gradient(#5e39e0 0.5px, transparent 0.5px),
+    radial-gradient(#fe4a91 0.5px, #f8f9fe 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  opacity: 0.1;
+}
+
+.coupon-notch {
+  mask-image:
+    radial-gradient(circle at 0 50%, transparent 8px, black 8px),
+    radial-gradient(circle at 100% 50%, transparent 8px, black 8px);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    radial-gradient(circle at 0 50%, transparent 8px, black 8px),
+    radial-gradient(circle at 100% 50%, transparent 8px, black 8px);
+  -webkit-mask-composite: source-in;
+}
+
+.coupon-divider {
+  margin: 0 16px;
+  border-top: 2px dashed #c9c4d8;
+}
+
+.wishlist-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.review-tab-content {
+  animation: reviewFadeIn 0.3s ease-in-out;
+}
+
+@keyframes reviewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
