@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 
 const FILTERS = ['TOPIK 전문', '비즈니스', '그룹수업', '가격순', '원어민'];
 
@@ -143,7 +143,7 @@ function TeacherCard({
   );
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -260,5 +260,13 @@ export default function SearchPage() {
         ))}
       </nav>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense>
+      <SearchContent />
+    </Suspense>
   );
 }
