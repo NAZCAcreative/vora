@@ -140,7 +140,7 @@ export const useAuthStore = create<AuthState>()(
       name: 'vora-auth',
       // 서버 렌더는 항상 user: null로 시작하는데, 클라이언트가 마운트 즉시 localStorage의
       // 캐시된 user를 자동 적용하면 서버/클라이언트 렌더 결과가 달라져 하이드레이션 에러가 난다.
-      // AuthHydrator가 실제 Supabase 세션과 대조해 확정한 뒤 명시적으로 rehydrate()를 호출한다.
+      // 캐시된 사용자 정보는 복원하지 않고 AuthHydrator가 실제 세션으로 프로필을 다시 읽는다.
       skipHydration: true,
       partialize: (state) => ({
         user: state.user,
