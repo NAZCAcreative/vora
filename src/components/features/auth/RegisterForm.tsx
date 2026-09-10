@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
@@ -37,6 +38,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export function RegisterForm() {
+  const [verificationSent, setVerificationSent] = useState(false);
   const router = useRouter();
   const registerUser = useAuthStore((s) => s.register);
   const isLoading = useAuthStore((s) => s.isLoading);
@@ -53,8 +55,9 @@ export function RegisterForm() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      await registerUser(data);
-      router.push('/homeT');
+      const result = await registerUser(data);
+      if (result === 'verify_email') setVerificationSent(true);
+      else router.push('/student/home');
     } catch (err) {
       setError('root', {
         message: err instanceof Error ? err.message : 'Registration failed. Please try again.',
@@ -63,12 +66,13 @@ export function RegisterForm() {
   };
 
   const fieldClass =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-korean-red focus:outline-none focus:ring-1 focus:ring-korean-red';
-  const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+    'w-full rounded-xl border border-outline-variant bg-white px-4 py-3 text-base focus:border-primary focus:ring-1 focus:ring-primary';
+  const labelClass = 'block text-sm font-medium text-on-surface-variant mb-2';
   const errorClass = 'mt-1 text-xs text-red-600';
 
+  if (verificationSent) return <div role="status" className="space-y-4"><p>가입 이메일로 보낸 인증 링크를 확인한 후 로그인해주세요.</p><Link href="/login">로그인으로 이동</Link></div>;
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       <div>
         <label htmlFor="name" className={labelClass}>Full Name</label>
         <input id="name" type="text" autoComplete="name" {...register('name')} className={fieldClass} />
@@ -117,15 +121,15 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded-lg bg-korean-red py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
+        className="w-full min-h-12 rounded-xl bg-primary py-3 text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
       >
         {isLoading ? 'Creating account...' : 'Create Account'}
       </button>
 
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-on-surface-variant">
         Already have an account?{' '}
-        <Link href="/homeT" className="font-medium text-korean-red hover:underline">
-          Go to dashboard
+        <Link href="/login" className="inline-flex min-h-11 items-center font-medium text-primary hover:underline">
+          Log in
         </Link>
       </p>
     </form>

@@ -1,4 +1,4 @@
-# VARA Design Rules
+# VORA Design Rules
 
 이 문서는 모든 화면 개발 시 공통으로 따라야 하는 디자인/반응형/동작 규칙이다. 새 화면을 만들거나 기존 화면을 수정할 때 이 기준을 우선 적용한다.
 
@@ -8,21 +8,21 @@
 - 화면 내부에 별도 상단 네비나 하단 네비를 중복으로 만들지 않는다.
 - 기존 페이지에 남아 있는 개별 header/nav는 공통 네비와 충돌하지 않도록 제거하거나 숨김 정책에 맞춘다.
 - 학생 모드와 선생님 모드는 라우트 영역을 분리한다.
-  - 학생 홈: `/home`
-  - 학생 내 정보: `/profile-setup`
-  - 선생님 홈: `/homeT`
-  - 선생님 내 정보: `/profileT`
+  - 학생 홈: `/student/home`
+  - 학생 내 정보: `/student/profile`
+  - 선생님 홈: `/teacher/home`
+  - 선생님 내 정보: `/teacher/profile`
 - 공통 상단 네비의 로고와 프로필 사진 링크도 현재 모드에 맞춰 이동해야 한다.
 
 ## 상단 네비
 
 - 상단 네비는 로고 중앙, 우측에 설정/알림/프로필 순서로 유지한다.
 - 로고 클릭:
-  - 학생 모드에서는 `/home`
-  - 선생님 모드에서는 `/homeT`
+  - 학생 모드에서는 `/student/home`
+  - 선생님 모드에서는 `/teacher/home`
 - 프로필 사진 클릭:
-  - 학생 모드에서는 `/profile-setup`
-  - 선생님 모드에서는 `/profileT`
+  - 학생 모드에서는 `/student/profile`
+  - 선생님 모드에서는 `/teacher/profile`
 - 알림 아이콘은 페이지 이동이 아니라 레이어 팝업 슬라이드로 연다.
 - 새 알림이 있으면 알림 아이콘 오른쪽 위에 작은 빨간 점을 표시한다.
 
@@ -33,17 +33,17 @@
 - 활성 탭만 `bg-primary-container`와 `text-on-primary-container`를 사용한다.
 - 검색 탭을 눌렀는데 예약 탭이 활성화되는 식의 라우트 매칭 오류가 없어야 한다.
 - 학생 하단 네비:
-  - 홈 `/home`
-  - 검색 `/search`
-  - 예약 `/my-bookings`
-  - 채팅 `/chat`
-  - 마이 `/profile-setup`
+  - 홈 `/student/home`
+  - 검색 `/student/search`
+  - 예약 `/student/booking`
+  - 채팅 `/student/chat`
+  - 마이 `/student/profile`
 - 선생님 하단 네비:
-  - 홈 `/homeT`
-  - 수업관리 `/lessonsT`
-  - 등록 `/registerT`
-  - 채팅 `/chatT`
-  - 마이 `/profileT`
+  - 홈 `/teacher/home`
+  - 수업관리 `/teacher/lessons`
+  - 등록 `/teacher/register`
+  - 채팅 `/teacher/chat`
+  - 마이 `/teacher/profile`
 
 ## 레이어/팝업
 

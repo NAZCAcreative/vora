@@ -1,18 +1,24 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Providers } from './providers';
 import { BottomNavigation } from '@/components/shared/BottomNavigation';
 import { TopNavigation } from '@/components/shared/TopNavigation';
+import { ChatFab } from '@/components/shared/ChatFab';
+import { ToastHost } from '@/components/shared/Toast';
+import { PageMotion } from '@/components/shared/PageMotion';
+
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content' };
 
 export const metadata: Metadata = {
-  title: 'K-Lingo Bridge | Learn Korean',
+  title: 'Go Ssaem | Learn Korean',
   description: 'Korean language education platform for global learners',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" data-design="gossaem" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: "try{document.documentElement.dataset.design=localStorage.getItem('gossaem-design-mode')==='classic'?'classic':'gossaem'}catch(e){}" }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
@@ -26,9 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
+          <PageMotion />
           <TopNavigation />
           {children}
           <BottomNavigation />
+          <ChatFab />
+          <ToastHost />
         </Providers>
       </body>
     </html>

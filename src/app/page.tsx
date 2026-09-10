@@ -1,75 +1,136 @@
-﻿import Link from 'next/link';
+'use client';
 
-const AVATARS = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBJ-UdiMIb9221tWbFr019ViyIAWdEdUsSoaGotpYPgUadN0Ny4Hmm69gylIXI-ROvxj3kV8390jevEE6onkiVz-j6oQhVuciBAdfN0eZuaSJ4KUDPXHYZaG5WZ6_O1ozYp77Lmh5Yru9x22Gd8zrBc9SoTB6cTW3yxICN7_rv2HQx6mcp65A6Emi-iSpgGiAz904XAxHlvHoEORWs6rVK9xSdfnwnIP7Oye6cfLw3BIsksuQQeiQi-5U6hqmMzr-h5_v1qiejUtQ',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuC4LYbY6nPCCozMIX9d6djntTekXOzd07Agpkm8s6gYRXVIhCRyXENZ1W2YTtHc1_Y8mvAcUbjuO01K0IEdfBMfn8kcNzNfh-6PlU5hyUq8G73Yb9iscKXtp54EWH4EOu80icjLyQ3L9k_A_EEinS0ytop20qyVg5DX1g0xN2AUAhMIjO-6zJywnm7A6mQvQz9CPsM0Z_FRP2ilmPhsSp65cqS-0GwAfrVEsCPtkaq1u8K6grvaUh1PcETrL0j_rDegYd1CjkoQTg',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuB1F9VjlNfuwMsFpyenr_NgX0pkcQ_G5NwBHr095Dvyh1bY2XJXlrUpno7lDePpPyrc2i3kciy2q84eaEUJfCf45ytwmY-kPmQKD_GPRDH4jl5LwtO1NXRZjPuzMNRUa5RZnw1ON6jUkLPIPkvxzlNuwty0E9S4zrev1io-_FRst5da3uAmTsUAbbS0iV3NqGDjBIsUAfhYJnMHI0SyXx7qbA0rw7hhuMF_s5uNZkxCqR08bIWVRxiGHvIhH7szWUyt1CyEfwbSw',
+import Link from 'next/link';
+import { LearningPlayground } from '@/components/shared/LearningPlayground';
+import { LearningImage } from '@/components/shared/LearningImage';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+const STEPS = [
+  {
+    step: '1',
+    icon: 'search',
+    bg: 'bg-primary-fixed',
+    iconColor: 'text-primary',
+    title: '선생님 찾기',
+    description: '전문분야와 리뷰를 보고 나에게 맞는 한국어 선생님을 찾아보세요.',
+  },
+  {
+    step: '2',
+    icon: 'event_available',
+    bg: 'bg-secondary-fixed',
+    iconColor: 'text-secondary',
+    title: '무료체험 예약',
+    description: '부담 없이 무료 체험 레슨으로 선생님을 먼저 만나보세요.',
+  },
+  {
+    step: '3',
+    icon: 'school',
+    bg: 'bg-tertiary-fixed',
+    iconColor: 'text-tertiary',
+    title: '학습 시작',
+    description: '1:1 수업 또는 그룹 클래스로 꾸준히 한국어를 배워보세요.',
+  },
 ];
 
 export default function HomePage() {
+  const [userCount, setUserCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .then(({ count }) => setUserCount(count ?? null));
+  }, []);
+
   return (
-    <div className="relative bg-background text-on-background min-h-screen flex flex-col font-sans overflow-hidden">
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-[100px] animate-floating" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-secondary/10 blur-[100px] animate-floating" style={{ animationDelay: '2s' }} />
-      </div>
-
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-container-margin text-center">
-        <div className="max-w-md w-full flex flex-col items-center gap-stack-lg">
-          <div className="relative w-full aspect-square max-w-[280px] md:max-w-[340px] mb-stack-md fade-in">
-            <div className="absolute inset-0 primary-gradient-btn rounded-full opacity-10 animate-pulse" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt="Korean study desk with calligraphy notebook and cherry blossoms"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA9D9VZb7slFd3AT9qffcxoUc35aauu9EMLlgp6D2wjwxlbqhZL1P__aYP5_OkrexAWXGaJGM5NEb_yPv3zMThb0ixdHyY5BZw7lZtLn9EDg9z8HVjubQLE6V6sXEYYWNYu-Ov-tYYy9tUvCcxUETs_v9sCUVqUGD5uOpm2nuPQ-7Z36HREkoy6a_vq62kv_SKJlftlNfqHGDL_AkVIok_erzXvDy_EtkD34nxIN4MclrT1WtFa-axWNuntVwbhfSHmhSri-lUWw"
-              className="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white"
-            />
-            <div className="absolute bottom-4 -right-4 glass-card px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-floating">
-              <span className="material-symbols-outlined text-secondary text-sm leading-none" style={{ fontVariationSettings: "'FILL' 1" }}>
-                stars
-              </span>
-              <span className="text-xs font-medium text-on-surface whitespace-nowrap">Top rated learning</span>
-            </div>
-          </div>
-
-          <div className="space-y-stack-sm fade-in" style={{ animationDelay: '0.3s' }}>
-            <h1 className="font-headline text-[32px] leading-[40px] font-extrabold tracking-tight">
-              Start learning Korean
+    <div className="bg-background pb-24 text-on-background font-body-md">
+      <section className="landing-hero primary-gradient relative overflow-hidden">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-section-gap px-container-margin py-8 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-24">
+          <div className="landing-copy order-1 flex flex-col items-center gap-stack-lg text-center lg:order-1 lg:items-start lg:text-left">
+            <p className="brand-eyebrow">조금 서툴러도, 함께라서 즐거워요</p>
+            <h1 className="font-headline text-[28px] font-extrabold leading-[36px] sm:text-[32px] sm:leading-[40px] tracking-tight text-white lg:text-[52px] lg:leading-[60px]">
+              한국어 한 마디,
               <br />
-              <span className="gradient-text">with expert tutors</span>
+              친구가 되는 시작!
             </h1>
-            <p className="text-base text-on-surface-variant px-4 leading-relaxed">
-              Bridge languages and cultures with personalized Korean lessons from world-class experts.
+            <p className="max-w-md text-base leading-relaxed text-white/85 lg:text-lg">
+              좋아하는 이야기로 웃고, 말하고, 조금씩 가까워져요. 나와 잘 맞는 선생님과 즐거운 한국어를 시작해 보세요.
             </p>
-          </div>
 
-          <div className="w-full flex flex-col gap-4 mt-stack-lg fade-in" style={{ animationDelay: '0.5s' }}>
-            <Link href="/onboarding" className="primary-gradient-btn w-full h-14 rounded-full text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
-              <span>Get started</span>
-              <span className="material-symbols-outlined text-sm leading-none">arrow_forward</span>
-            </Link>
+            <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
+              <Link
+                href="/onboarding"
+                className="flex h-14 items-center justify-center gap-2 rounded-lg bg-white px-8 text-sm font-semibold text-primary shadow-sm transition-transform active:scale-[0.98]"
+              >
+                <span>즐겁게 시작하기</span>
+                <span className="material-symbols-outlined text-sm leading-none">arrow_forward</span>
+              </Link>
+              <Link
+                href="/teacher/home"
+                className="flex h-14 items-center justify-center rounded-lg border-[1.5px] border-white/40 px-8 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                선생님이신가요?
+              </Link>
+            </div>
 
-            <div className="flex items-center gap-4 w-full">
-              <Link href="/homeT" className="flex-1 h-12 rounded-full border-[1.5px] border-outline-variant text-on-surface text-sm font-semibold hover:bg-surface-container-low transition-colors flex items-center justify-center">
-                Teacher
+            <p className="text-sm text-white/80">
+              이미 계정이 있으신가요?{' '}
+              <Link href="/login" className="inline-flex min-h-11 items-center px-1 font-bold text-white hover:underline">
+                로그인
+              </Link>{' '}
+              ·{' '}
+              <Link href="/signup" className="inline-flex min-h-11 items-center px-1 font-bold text-white hover:underline">
+                회원가입
               </Link>
-              <Link href="/register" className="flex-1 h-12 rounded-full border-[1.5px] border-outline-variant text-on-surface text-sm font-semibold hover:bg-surface-container-low transition-colors flex items-center justify-center">
-                Register
-              </Link>
+            </p>
+
+            <div className="mt-stack-md flex flex-col items-center gap-stack-sm lg:items-start">
+              <div className="flex -space-x-1" aria-hidden="true">
+                {['안', '녕', '!'].map((letter, i) => (
+                  <span key={letter} className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ring-2 ring-white ${i === 0 ? 'bg-primary-fixed text-on-primary-fixed' : i === 1 ? 'bg-secondary-fixed text-on-secondary-fixed' : 'bg-tertiary-fixed text-on-tertiary-fixed'}`}>{letter}</span>
+                ))}
+              </div>
+              <p className="text-xs text-white/80">
+                {userCount != null ? `${userCount.toLocaleString()}명이 Go Ssaem과 함께하고 있어요` : '전 세계 학습자들과 함께하세요'}
+              </p>
             </div>
           </div>
 
-          <div className="mt-section-gap flex flex-col items-center gap-stack-sm fade-in" style={{ animationDelay: '0.7s' }}>
-            <div className="flex -space-x-3">
-              {AVATARS.map((src, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} alt="" src={src} className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" />
-              ))}
+          <div className="order-2 flex justify-center lg:order-2">
+            <LearningPlayground />
+            <div className="classic-hero-art relative aspect-square w-full max-w-[280px] fade-in lg:max-w-[420px]">
+              <div className="absolute inset-0 rounded-full bg-white/10 blur-2xl" />
+              <LearningImage scene="desk" className="h-full w-full rounded-full border-4 border-white object-cover shadow-2xl" />
+              <div className="absolute bottom-4 right-0 flex items-center gap-2 rounded-xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur-md">
+                <span className="material-symbols-outlined text-sm leading-none text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  stars
+                </span>
+                <span className="whitespace-nowrap text-xs font-medium text-on-surface">평점 높은 선생님들</span>
+              </div>
             </div>
-            <p className="text-xs text-outline">Joined by 50,000+ learners worldwide</p>
           </div>
         </div>
-      </main>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-container-margin py-14 lg:py-24">
+        <h2 className="text-center font-headline text-2xl font-extrabold text-on-surface lg:text-left lg:text-4xl">이렇게 시작해요</h2>
+        <div className="mt-section-gap grid gap-gutter-md sm:grid-cols-3">
+          {STEPS.map((s) => (
+            <div key={s.step} className="joy-step">
+              <span className="inline-block rounded-full border border-outline-variant px-3 py-1 font-label-sm text-label-sm font-bold text-on-surface-variant">
+                STEP {s.step}
+              </span>
+              <div className={`relative mt-4 h-36 overflow-hidden rounded-xl lg:h-44 ${s.bg}`}>
+                <LearningImage scene={s.step === '1' ? 'cafe' : s.step === '2' ? 'desk' : 'seoul'} className="h-full w-full transition-transform duration-700 group-hover:scale-105" />
+              </div>
+              <h3 className="mt-4 font-headline-md text-headline-md font-bold text-on-surface">{s.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-on-surface-variant">{s.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

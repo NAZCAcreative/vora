@@ -1,0 +1,86 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const ts = require('typescript');
+
+function compile(file, imports = {}) {
+  const context = { exports: {}, require: name => name in imports ? imports[name] : require(name), console, setTimeout, clearTimeout };
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText, context);
+  return context.exports;
+}
+function authFixture() {
+  const pending = [];
+  let signUpSession = null;
+  let logoutError = null;
+  const client = {
+    from: () => ({ select: () => ({ eq: (_, id) => ({ single: () => new Promise(resolve => pending.push({ id, resolve })) }) }) }),
+    auth: {
+      signUp: async () => ({ data: { user: { id: 'signup' }, session: signUpSession }, error: null }),
+      signOut: async () => ({ error: logoutError }),
+    },
+  };
+  const { useAuthStore: store } = compile('src/stores/auth-store.ts', {
+    '@/lib/supabase/client': { createClient: () => client },
+    'zustand/middleware': { persist: config => config },
+  });
+  const resolve = (entry, name = entry.id) => entry.resolve({ data: { id: entry.id, name, role: 'student', korean_level: 'beginner' }, error: null });
+  return { store, pending, resolve, setLogoutError: value => { logoutError = value; } };
+}
+
+test('older account requests cannot overwrite the current authenticated profile', async () => {
+  const { store, pending, resolve } = authFixture();
+  const old = store.getState().syncUser('old');
+  const current = store.getState().syncUser('current');
+  resolve(pending[1]); await current;
+  resolve(pending[0]); await old;
+  assert.equal(store.getState().user.id, 'current');
+  const reload = store.getState().syncUser('current');
+  resolve(pending[2], 'Updated name'); await reload;
+  assert.equal(store.getState().user.name, 'Updated name');
+});
+test('changing account clears previous data before the profile request completes', async () => {
+  const { store, pending, resolve } = authFixture();
+  const load = store.getState().syncUser('old'); resolve(pending[0]); await load;
+  const changing = store.getState().syncUser('new');
+  assert.equal(store.getState().user, null);
+  pending[1].resolve({ data: null, error: { message: 'offline' } });
+  await assert.rejects(changing);
+  assert.equal(store.getState().user, null);
+  assert.equal(store.getState().isAuthenticated, false);
+});
+test('signup without a session is an email verification state, not authenticated', async () => {
+  const { store, pending } = authFixture();
+  const result = await store.getState().register({ email: 'fixture@example.test', password: 'example-test-password', name: 'Fixture', nativeLanguage: 'en', koreanLevel: 'beginner' });
+  assert.equal(result, 'verify_email');
+  assert.equal(store.getState().isAuthenticated, false);
+  assert.equal(pending.length, 0);
+});
+test('failed logout reports failure and does not pretend the session was removed', async () => {
+  const { store, pending, resolve, setLogoutError } = authFixture();
+  const load = store.getState().syncUser('current'); resolve(pending[0]); await load;
+  setLogoutError({ message: 'offline' });
+  await assert.rejects(store.getState().logout());
+  assert.equal(store.getState().user.id, 'current');
+});
+test('auth redirect only accepts an internal path', () => {
+  const { safeAuthNext } = compile('src/lib/auth-redirect.ts');
+  for (const value of [null, 'https://example.test', '//example.test', '/\\example.test', '/\nexample.test']) assert.equal(safeAuthNext(value), '/student/home');
+  assert.equal(safeAuthNext('/support?tab=mine'), '/support?tab=mine');
+});
+test('aggregate page collector preserves rows beyond the server response limit', async () => {
+  const { collectPages } = compile('src/lib/queries/paging.ts');
+  const source = Array.from({ length: 1502 }, (_, id) => ({ id }));
+  let calls = 0;
+  const result = await collectPages(async (from, to) => { calls++; return { data: source.slice(from, to + 1), error: null }; });
+  assert.equal(result.length, 1502);
+  assert.equal(new Set(result.map(row => row.id)).size, 1502);
+  assert.equal(calls, 4);
+});
+test('client discount preview rejects expired and malformed coupons', () => {
+  const { computeDiscount } = compile('src/lib/queries/coupons.ts', { '@/lib/supabase/client': {} });
+  const coupon = { minOrderAmount: 0, discountType: 'percent', discountValue: 100, expiresAt: '2000-01-01' };
+  assert.equal(computeDiscount(coupon, 10000), 0);
+  assert.equal(computeDiscount({ ...coupon, expiresAt: null, discountValue: 101 }, 10000), 0);
+  assert.equal(computeDiscount({ ...coupon, expiresAt: null }, 10000), 10000);
+});

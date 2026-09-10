@@ -1,52 +1,89 @@
 'use client';
 
 import Image from 'next/image';
+import { SettingsDialog } from './SettingsDialog';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NotificationLayer } from './NotificationLayer';
+import { countUnreadNotifications, subscribeToNotifications } from '@/lib/queries/notifications';
+import { useAuthStore } from '@/stores/auth-store';
 
-const TEACHER_MODE_PREFIXES = ['/homeT', '/lessonsT', '/registerT', '/chatT', '/profileT'];
+const TEACHER_MODE_PREFIXES = ['/teacher/home', '/teacher/lessons', '/teacher/register', '/teacher/chat', '/teacher/profile'];
 
 export function TopNavigation() {
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const teacherMode = TEACHER_MODE_PREFIXES.some((path) => pathname.startsWith(path));
-  const homeHref = teacherMode ? '/homeT' : '/home';
-  const profileHref = teacherMode ? '/profileT' : '/profile-setup';
+  const homeHref = teacherMode ? '/teacher/home' : '/student/home';
+  const profileHref = teacherMode ? '/teacher/profile' : '/student/profile';
   const profileLabel = teacherMode ? '선생님 내 정보' : '학생 내 정보';
+
+  useEffect(() => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+    let cancelled = false;
+
+    countUnreadNotifications(user.id)
+      .then((count) => {
+        if (!cancelled) setUnreadCount(count);
+      })
+      .catch(() => {});
+
+    const unsubscribe = subscribeToNotifications(user.id, () => {
+      setUnreadCount((prev) => prev + 1);
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [user]);
 
   return (
     <>
-      <header className="global-top-nav relative sticky top-0 z-[70] flex w-full items-center justify-end bg-white/80 px-container-margin py-stack-md backdrop-blur-md">
+      <header className="global-top-nav sticky top-0 z-[70] flex w-full items-center justify-end bg-white/80 h-16 border-b border-surface-container-high px-container-margin backdrop-blur-md">
         <Link
           href={homeHref}
-          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center"
+          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 h-11 items-center"
           aria-label="홈으로 이동"
         >
-          <Image src="/img/logo_pink.png" alt="VARA" width={102} height={24} className="h-6 w-auto object-contain" priority />
+          <Image src="/img/gossaem_logo01.png" alt="Go Ssaem" width={2172} height={724} className="h-auto w-28 object-contain sm:w-36" priority />
         </Link>
-        <div className="flex items-center gap-3">
-          <Link className="transition-opacity duration-150 hover:opacity-80 active:scale-95" href="/notification-settings" aria-label="설정">
-            <span className="material-symbols-outlined text-on-surface-variant">settings</span>
-          </Link>
+        <div className="flex items-center gap-1">
+          <SettingsDialog />
           <button
             type="button"
-            className="relative transition-opacity duration-150 hover:opacity-80 active:scale-95"
+            className="relative flex h-11 w-11 items-center justify-center rounded-lg hover:bg-surface-container-low"
             aria-label="알림"
             aria-expanded={notificationsOpen}
-            onClick={() => setNotificationsOpen(true)}
+            onClick={() => {
+              setNotificationsOpen(true);
+              setUnreadCount(0);
+            }}
           >
             <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-            <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-error ring-2 ring-white" aria-hidden="true" />
+            {unreadCount > 0 && (
+              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-error ring-2 ring-white" aria-hidden="true" />
+            )}
           </button>
-          <Link className="transition-transform duration-150 active:scale-95" href={profileHref} aria-label={profileLabel}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={profileLabel}
-              className="h-9 w-9 rounded-full border-2 border-primary-fixed object-cover shadow-sm"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVqrHTfKv4yGyh7EfSy6eCnYV2Y3gAnx61i4A2vfanrwKZeCfUeRzvJgJh2Oz-784Pi47-vR3dnBtXqL4zIE-k2sg9vB3azVlJEhp0kdS3SExF2Il9adJ5YnvebzvfYBJiEhv4LGfKUL7GrXJj3hsYU0VBLMHAyJQHs8TMSn_FDOKE2oTtTKVQGH47XGg30WBKf64BQ4iuLlnWBXexEfkipO4_dTxL8S0yA7HrbOaxryrji5K8rQ_9oCGg--cytLD3ARmGTGz9Ew"
-            />
+          <Link className="flex h-11 w-11 items-center justify-center rounded-lg transition-transform active:scale-[0.98]" href={profileHref} aria-label={profileLabel}>
+            {user?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                alt={profileLabel}
+                className="h-9 w-9 rounded-full border-2 border-primary-fixed object-cover shadow-sm"
+                src={user.avatarUrl}
+              />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-primary-fixed bg-primary/10 font-label-lg text-label-lg text-primary shadow-sm">
+                {user?.name?.slice(0, 1) ?? '?'}
+              </div>
+            )}
           </Link>
         </div>
       </header>

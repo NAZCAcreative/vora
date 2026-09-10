@@ -9,10 +9,10 @@ Implementation:
 - Existing page-level `<header>` elements are hidden globally so the shared top navigation stays consistent.
 
 Required controls:
-- Brand link: `K-Lingo Bridge`, routes to `/home`.
+- Brand link: `K-Lingo Bridge`, routes to `/student/home`.
 - Notification button.
 - Settings button, routes to `/notification-settings`.
-- Profile image button, routes to `/profile-setup`.
+- Profile image button, routes to `/student/profile`.
 - Menu button.
 
 Canonical markup style:

@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { RegisterForm } from '@/components/features/auth/RegisterForm';
 
-export const metadata: Metadata = { title: 'Create Account | KoreaLingoBridge' };
+export const metadata: Metadata = { title: 'Create Account | VORA' };
 
 export default function RegisterPage() {
   return (
-    <>
-      <h2 className="mb-6 text-xl font-semibold text-gray-900">Create Account</h2>
+    <main className="mx-auto max-w-md px-container-margin pt-8 pb-32">
+      <h2 className="mb-6 text-headline-lg font-headline text-on-surface">Create Account</h2>
       <RegisterForm />
-    </>
+    </main>
   );
 }

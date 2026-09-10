@@ -12,13 +12,13 @@ export function RoleSwitcher() {
   const toggle = () => {
     const nextRole = activeRole === 'student' ? 'teacher' : 'student';
     switchRole(nextRole);
-    router.push(nextRole === 'teacher' ? '/homeT' : '/home');
+    router.push(nextRole === 'teacher' ? '/teacher/home' : '/student/home');
   };
 
   return (
     <button
       onClick={toggle}
-      className="flex items-center gap-2 rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium hover:border-korean-blue transition-colors"
+      className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium hover:border-korean-blue transition-colors"
       title="Switch role"
     >
       <span
