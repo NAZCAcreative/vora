@@ -13,20 +13,61 @@ function authFixture() {
   const pending = [];
   let signUpSession = null;
   let logoutError = null;
+  let loginError = null;
+  let loginInput;
   const client = {
     from: () => ({ select: () => ({ eq: (_, id) => ({ single: () => new Promise(resolve => pending.push({ id, resolve })) }) }) }),
     auth: {
+      signInWithPassword: async input => {
+        loginInput = input;
+        return { data: { user: loginError ? null : { id: 'login' } }, error: loginError };
+      },
       signUp: async () => ({ data: { user: { id: 'signup' }, session: signUpSession }, error: null }),
       signOut: async () => ({ error: logoutError }),
     },
   };
   const { useAuthStore: store } = compile('src/stores/auth-store.ts', {
+    '@/lib/auth-redirect': compile('src/lib/auth-redirect.ts'),
     '@/lib/supabase/client': { createClient: () => client },
     'zustand/middleware': { persist: config => config },
   });
   const resolve = (entry, name = entry.id) => entry.resolve({ data: { id: entry.id, name, role: 'student', korean_level: 'beginner' }, error: null });
-  return { store, pending, resolve, setLogoutError: value => { logoutError = value; } };
+  return { store, pending, resolve, setLogoutError: value => { logoutError = value; }, setLoginError: value => { loginError = value; }, getLoginInput: () => loginInput };
 }
+
+test('password rejection explains credentials or email verification and permits retry', async () => {
+  const { store, pending, setLoginError, getLoginInput } = authFixture();
+  for (const [code, expected] of [
+    ['invalid_credentials', /이메일 또는 비밀번호/],
+    ['email_not_confirmed', /이메일 인증/],
+    ['over_request_rate_limit', /시도가 너무 많/],
+    ['email_provider_disabled', /이메일 로그인을 사용할 수 없/],
+  ]) {
+    setLoginError({ code, status: 400, message: 'Raw server error' });
+    await assert.rejects(store.getState().login(' fixture@example.test ', ' unchanged password '), expected);
+    assert.equal(store.getState().isLoading, false);
+    assert.equal(store.getState().isAuthenticated, false);
+  }
+  assert.equal(getLoginInput().email, 'fixture@example.test');
+  assert.equal(getLoginInput().password, ' unchanged password ');
+  assert.equal(pending.length, 0);
+});
+
+test('successful password authentication loads profile; profile failures are distinguished', async () => {
+  const { store, pending, resolve } = authFixture();
+  const failed = store.getState().login('fixture@example.test', 'fixture');
+  await new Promise(setImmediate);
+  pending[0].resolve({ data: null, error: { message: 'offline' } });
+  await assert.rejects(failed, /계정 인증은 완료됐지만 회원 정보/);
+  assert.equal(store.getState().isLoading, false);
+  const retry = store.getState().login('fixture@example.test', 'fixture');
+  await new Promise(setImmediate);
+  resolve(pending[1]);
+  await retry;
+  assert.equal(store.getState().user.id, 'login');
+  assert.equal(store.getState().isAuthenticated, true);
+  assert.equal(store.getState().isLoading, false);
+});
 
 test('older account requests cannot overwrite the current authenticated profile', async () => {
   const { store, pending, resolve } = authFixture();

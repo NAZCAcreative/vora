@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createClient } from '@/lib/supabase/client';
+import { safeAuthNext } from '@/lib/auth-redirect';
 import type { Profile, UserRole, LanguageLevel } from '@/types';
 
 interface RegisterData {
@@ -13,6 +14,24 @@ interface RegisterData {
 
 let authRevision = 0;
 
+function passwordLoginError(error: { code?: string; status?: number }): string {
+  switch (error.code) {
+    case 'invalid_credentials':
+      return '이메일 또는 비밀번호가 올바르지 않습니다. Google로 가입했다면 Google로 계속하기를 이용해주세요.';
+    case 'email_not_confirmed':
+      return '이메일 인증이 필요합니다. 가입할 때 받은 인증 메일의 링크를 누른 후 다시 로그인해주세요.';
+    case 'email_provider_disabled':
+      return '현재 이메일 로그인을 사용할 수 없습니다. 고객센터에 문의해주세요.';
+    case 'user_banned':
+      return '로그인이 제한된 계정입니다. 고객센터에 문의해주세요.';
+    case 'over_request_rate_limit':
+      return '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+    default:
+      if (error.status === 429) return '로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+      return '로그인 요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.';
+  }
+}
+
 interface AuthState {
   syncUser: (id: string | null) => Promise<void>;
   user: Profile | null;
@@ -24,6 +43,7 @@ interface AuthState {
   // 하드 새로고침 시 실제로는 로그인된 사용자인데도 빈 화면(찜 목록/채팅 목록 등)을 잘못 보여주게 된다.
   isHydrated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (next?: string | null) => Promise<void>;
   register: (data: RegisterData) => Promise<'signed_in' | 'verify_email'>;
   logout: () => Promise<void>;
   fetchMe: () => Promise<void>;
@@ -74,12 +94,35 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const supabase = createClient();
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error || !data.user) throw new Error(error?.message ?? 'Login failed');
+          const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+          if (error) throw new Error(passwordLoginError(error));
+          if (!data.user) throw new Error('로그인 정보를 확인하지 못했습니다. 다시 로그인해주세요.');
 
-          await get().syncUser(data.user.id);
+          try {
+            await get().syncUser(data.user.id);
+          } catch {
+            throw new Error('계정 인증은 완료됐지만 회원 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+          }
         } finally {
           set({ isLoading: false });
+        }
+      },
+
+      loginWithGoogle: async (next) => {
+        if (get().isLoading) return;
+        set({ isLoading: true });
+        try {
+          const redirectTo = new URL('/auth/callback', window.location.origin);
+          redirectTo.searchParams.set('next', safeAuthNext(next ?? null));
+          const { data, error } = await createClient().auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: redirectTo.toString(), skipBrowserRedirect: true },
+          });
+          if (error || !data.url) throw new Error('Google 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요.');
+          window.location.assign(data.url);
+        } catch (error) {
+          set({ isLoading: false });
+          throw error;
         }
       },
 

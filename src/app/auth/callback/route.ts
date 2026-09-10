@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const next = safeAuthNext(searchParams.get('next'));
 
-  if (code) {
+  if (code && !searchParams.has('error')) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
@@ -17,5 +17,8 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+  const loginUrl = new URL('/login', origin);
+  loginUrl.searchParams.set('error', searchParams.get('error') === 'access_denied' ? 'auth_cancelled' : 'auth_callback_failed');
+  loginUrl.searchParams.set('next', next);
+  return NextResponse.redirect(loginUrl);
 }

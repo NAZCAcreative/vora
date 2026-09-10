@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { GoogleAuthButton } from '@/components/shared/GoogleAuthButton';
 import { useAuthStore } from '@/stores/auth-store';
 import type { LanguageLevel } from '@/types';
 
@@ -39,6 +40,7 @@ type FormValues = z.infer<typeof schema>;
 
 export function RegisterForm() {
   const [verificationSent, setVerificationSent] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const router = useRouter();
   const registerUser = useAuthStore((s) => s.register);
   const isLoading = useAuthStore((s) => s.isLoading);
@@ -73,6 +75,9 @@ export function RegisterForm() {
   if (verificationSent) return <div role="status" className="space-y-4"><p>가입 이메일로 보낸 인증 링크를 확인한 후 로그인해주세요.</p><Link href="/login">로그인으로 이동</Link></div>;
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+      <GoogleAuthButton onError={setGoogleError} />
+      {googleError && <p role="alert" className="rounded-lg bg-error-container/20 px-4 py-3 text-sm text-error">{googleError}</p>}
+      <p className="text-center text-sm text-on-surface-variant">또는 이메일로 가입</p>
       <div>
         <label htmlFor="name" className={labelClass}>Full Name</label>
         <input id="name" type="text" autoComplete="name" {...register('name')} className={fieldClass} />
