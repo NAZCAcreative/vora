@@ -93,7 +93,7 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="text-xs text-white/80">
-                {userCount != null ? `${userCount.toLocaleString()}명이 Go Ssaem과 함께하고 있어요` : '전 세계 학습자들과 함께하세요'}
+                {userCount != null ? `${userCount.toLocaleString()}명이 GoSsaem과 함께하고 있어요` : '전 세계 학습자들과 함께하세요'}
               </p>
             </div>
           </div>

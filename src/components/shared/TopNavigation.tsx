@@ -52,7 +52,7 @@ export function TopNavigation() {
           className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 h-11 items-center"
           aria-label="홈으로 이동"
         >
-          <Image src="/img/gossaem_logo01.png" alt="Go Ssaem" width={2172} height={724} className="h-auto w-28 object-contain sm:w-36" priority />
+          <Image src="/img/gossaem_logo01.png" alt="GoSsaem" width={2172} height={724} className="h-auto w-28 object-contain sm:w-36" priority />
         </Link>
         <div className="flex items-center gap-1">
           <SettingsDialog />

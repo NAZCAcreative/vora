@@ -10,7 +10,7 @@ import { PageMotion } from '@/components/shared/PageMotion';
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content' };
 
 export const metadata: Metadata = {
-  title: 'Go Ssaem | Learn Korean',
+  title: 'GoSsaem | Learn Korean',
   description: 'Korean language education platform for global learners',
 };
 

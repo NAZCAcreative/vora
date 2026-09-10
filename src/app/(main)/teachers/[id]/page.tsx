@@ -79,7 +79,7 @@ export default function TeacherDetailPage({ params }: { params: { id: string } }
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title: `${teacher?.name ?? ''}쌤 - VORA`, url: shareUrl });
+        await navigator.share({ title: `${teacher?.name ?? ''}쌤 - GoSsaem`, url: shareUrl });
         return;
       } catch {
         // 사용자가 공유를 취소한 경우 클립보드 복사로 대체
@@ -197,22 +197,23 @@ export default function TeacherDetailPage({ params }: { params: { id: string } }
               </button>
             </div>
           )}
-          <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
-            <div className="bg-white/90 backdrop-blur-md rounded-xl border border-white/60 p-4 shadow-lg">
-              <div className="mb-1 flex items-center gap-2">
-                <span className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{teacher.name}</span>
-                {teacher.isVerified && (
-                  <span className="material-symbols-outlined text-2xl text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    local_florist
-                  </span>
-                )}
-              </div>
-              {teacher.headline && <p className="font-label-lg text-label-lg text-primary">{teacher.headline}</p>}
+        </section>
+
+        <section className="px-container-margin py-stack-lg">
+          <div className="min-w-0 rounded-xl border border-surface-container-high bg-surface p-4 shadow-sm">
+            <div className="mb-1 flex items-center gap-2">
+              <span className="min-w-0 break-words font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{teacher.name}</span>
+              {teacher.isVerified && (
+                <span className="material-symbols-outlined shrink-0 text-2xl text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  local_florist
+                </span>
+              )}
             </div>
+            {teacher.headline && <p className="break-words font-label-lg text-label-lg text-primary">{teacher.headline}</p>}
           </div>
         </section>
 
-        <section className="relative z-10 -mt-8 px-container-margin">
+        <section className="px-container-margin">
           <div className="grid grid-cols-2 gap-stack-md">
             <div className="flex flex-col items-center rounded-xl border border-surface-container-highest bg-surface p-stack-lg text-center shadow-[0px_4px_24px_rgba(0,0,0,0.06)]">
               <span className="material-symbols-outlined mb-2 text-primary">workspace_premium</span>

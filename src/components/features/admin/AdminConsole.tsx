@@ -149,7 +149,7 @@ export function AdminConsole() {
   return <main className="min-h-screen bg-slate-50 pb-28 text-slate-800">
     <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div><p className="text-xs font-bold tracking-[0.16em] text-primary">GO SSAEM ADMIN</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">운영 관리</h1><p className="mt-1 text-sm text-slate-500">회원부터 수업까지, 필요한 정보를 한곳에서 확인하세요.</p></div>
+        <div><p className="text-xs font-bold tracking-[0.16em] text-primary">GoSsaem ADMIN</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">운영 관리</h1><p className="mt-1 text-sm text-slate-500">회원부터 수업까지, 필요한 정보를 한곳에서 확인하세요.</p></div>
         <div className="flex gap-2"><Link className={buttonClass} href="/student/profile"><AdminIcon name="person" />마이로 돌아가기</Link><button className={buttonClass} disabled={loading} onClick={() => setRefresh((value) => value + 1)}><AdminIcon name="refresh" />새로고침</button></div>
       </div>
       <div className="grid items-start gap-6 lg:grid-cols-[200px_minmax(0,1fr)]">

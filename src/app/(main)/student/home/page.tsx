@@ -213,8 +213,8 @@ export default function HomePage() {
         </section>
 
         <section className="mt-stack-lg px-container-margin">
-          <div className="primary-gradient group relative flex h-40 items-center overflow-hidden rounded-xl p-6 shadow-xl">
-            <div className="z-10 flex max-w-[60%] flex-col gap-1 text-white">
+          <div className="primary-gradient group grid grid-cols-1 overflow-hidden rounded-xl shadow-xl sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+            <div className="flex min-w-0 flex-col justify-center gap-1 p-6 text-white">
               <span className="inline-block w-fit rounded bg-white/20 px-2 py-0.5 text-xs font-bold opacity-70">LIVE</span>
               <h4 className="font-headline-lg-mobile text-[18px] leading-snug">
                 K-POP으로 배우는 한국어
@@ -225,8 +225,8 @@ export default function HomePage() {
                 지금 확인하기 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </Link>
             </div>
-            <div className="absolute bottom-0 right-[-10px] h-full w-[45%]">
-              <LearningImage scene="seoul" className="h-full w-full rounded-l-3xl object-cover" />
+            <div className="relative min-h-40 overflow-hidden sm:min-h-full">
+              <LearningImage scene="seoul" className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </div>
         </section>
